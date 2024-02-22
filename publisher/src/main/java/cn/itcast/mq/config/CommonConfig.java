@@ -21,6 +21,11 @@ public class CommonConfig implements ApplicationContextAware {
         RabbitTemplate rabbitTemplate = applicationContext.getBean(RabbitTemplate.class);
         //创建Callback
         rabbitTemplate.setReturnCallback((message, replyCode, exchange, routingKey, replyText) -> {
+            //判断是否为延迟消息
+            if (message.getMessageProperties().getReceivedDelay() > 0) {
+                return;
+            }
+
             log.error("消息发送到队列失败，响应码：{}，失败原因：{}，交换机：{}，路由key：{}，消息：{}",
                     replyCode,replyText,exchange,routingKey,message.toString());
         });

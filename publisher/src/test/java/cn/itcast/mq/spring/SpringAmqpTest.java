@@ -69,4 +69,19 @@ public class SpringAmqpTest {
         rabbitTemplate.convertAndSend("ttl.direct", "ttl", message);
         log.info("消息发送成功");
     }
+
+    @Test
+    public void testSendMessageDelayQueue() throws InterruptedException {
+
+        Message message = MessageBuilder.withBody("hello, ttl message".getBytes(StandardCharsets.UTF_8))
+                .setDeliveryMode(MessageDeliveryMode.PERSISTENT)
+                .setHeader("x-delay", 5000)
+                .build();;
+
+        CorrelationData correlationData = new CorrelationData(UUID.randomUUID().toString());
+
+
+
+        rabbitTemplate.convertAndSend("delay.direct", "delay", message, correlationData);
+    }
 }
