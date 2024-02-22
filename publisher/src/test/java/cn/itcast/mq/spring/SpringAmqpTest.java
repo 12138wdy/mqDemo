@@ -76,12 +76,36 @@ public class SpringAmqpTest {
         Message message = MessageBuilder.withBody("hello, ttl message".getBytes(StandardCharsets.UTF_8))
                 .setDeliveryMode(MessageDeliveryMode.PERSISTENT)
                 .setHeader("x-delay", 5000)
-                .build();;
+                .build();
+        ;
 
         CorrelationData correlationData = new CorrelationData(UUID.randomUUID().toString());
 
 
-
         rabbitTemplate.convertAndSend("delay.direct", "delay", message, correlationData);
+    }
+
+    @Test
+    public void testLazyQueue() throws InterruptedException {
+
+        for (int i = 0; i < 1000000; i++) {
+            Message message = MessageBuilder.withBody("hello".getBytes(StandardCharsets.UTF_8))
+                    .setDeliveryMode(MessageDeliveryMode.PERSISTENT)
+                    .build();
+
+            rabbitTemplate.convertAndSend("lazy.queue", message);
+        }
+    }
+
+    @Test
+    public void testNormalQueue() throws InterruptedException {
+
+        for (int i = 0; i < 1000000; i++) {
+            Message message = MessageBuilder.withBody("hello".getBytes(StandardCharsets.UTF_8))
+                    .setDeliveryMode(MessageDeliveryMode.PERSISTENT)
+                    .build();
+
+            rabbitTemplate.convertAndSend("normal.queue", message);
+        }
     }
 }
