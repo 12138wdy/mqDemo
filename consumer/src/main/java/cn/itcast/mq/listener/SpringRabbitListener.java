@@ -11,12 +11,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class SpringRabbitListener {
 
-    @RabbitListener(queues = "simple.queue")
+    /*@RabbitListener(queues = "simple.queue")
     public void listenSimpleQueue(String msg) {
         log.debug("消费者接收到simple.queue的消息：【" + msg + "】");
         System.out.println(1 / 0);
         log.info("发送消息成功");
-    }
+    }*/
 
     @RabbitListener(bindings = @QueueBinding(
             value = @Queue(value = "dl.queue", declare = "true"),
@@ -27,13 +27,13 @@ public class SpringRabbitListener {
         log.info("消费者接受到dl.queue的延迟信息");
     }
 
-    @RabbitListener(bindings = @QueueBinding(
+    /*@RabbitListener(bindings = @QueueBinding(
             value = @Queue(value = "delay.queue", declare = "true"),
             exchange = @Exchange(value = "delay.direct", delayed = "true"),
             key = "delay"
     ))
     public void listenDelayQueue(){
         log.info("消费者接受到delay.queue的延迟信息");
-    }
+    }*/
 
 }
