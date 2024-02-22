@@ -33,21 +33,21 @@ public class SpringAmqpTest {
         CorrelationData correlationData = new CorrelationData(UUID.randomUUID().toString());
         correlationData.getFuture().addCallback(
                 result -> {
-                    if (result.isAck()){
+                    if (result.isAck()) {
                         //Ack
-                        log.debug("消息成功投递到交换机，ID为：{}",correlationData.getId());
-                    }else {
+                        log.debug("消息成功投递到交换机，ID为：{}", correlationData.getId());
+                    } else {
                         //NAck
-                        log.error("消息投递到交换机失败，ID为：{}",correlationData.getId());
+                        log.error("消息投递到交换机失败，ID为：{}", correlationData.getId());
                     }
                 }, err -> {
                     //失败，记录日志
-                    log.error("发送消息失败！",err);
+                    log.error("发送消息失败！", err);
                 }
         );
 
 
-        rabbitTemplate.convertAndSend("amq.topic", "simple.test", message,correlationData);
+        rabbitTemplate.convertAndSend("amq.topic", "simple.test", message, correlationData);
     }
 
     @Test
@@ -56,6 +56,17 @@ public class SpringAmqpTest {
                 .setDeliveryMode(MessageDeliveryMode.PERSISTENT)
                 .build();
         //发送信息
-        rabbitTemplate.convertAndSend("simple.queue",message);
+        rabbitTemplate.convertAndSend("simple.queue", message);
+    }
+
+    @Test
+    public void testTTLMessage() {
+        Message message = MessageBuilder.withBody("hello".getBytes(StandardCharsets.UTF_8))
+                .setDeliveryMode(MessageDeliveryMode.PERSISTENT)
+                .setExpiration("5000")
+                .build();
+        //发送信息
+        rabbitTemplate.convertAndSend("ttl.direct", "ttl", message);
+        log.info("消息发送成功");
     }
 }
